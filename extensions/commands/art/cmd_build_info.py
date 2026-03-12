@@ -516,13 +516,10 @@ def build_info_promote(conan_api: ConanAPI, parser, subparser, *args):
     subparser.add_argument("build_number", help="BuildInfo number to promote.")
     subparser.add_argument("source_repo", help="Artifactory repository to get artifacts from.")
     subparser.add_argument("target_repo", help="Artifactory repository to promote artifacts to.")
-    subparser.add_argument("--allow-partial", 
+    subparser.add_argument("--continue-on-error",
                            help="Promote all possible files even if some promotions fail (using failFast=false Artifactory API parameter). "
-                                "The exit code of the command will always be 0 regardless of individual promotion failures. "
-                                "Default: false.",
+                                "The exit code of the command will always be 0 regardless of any promotion failures. Default: false.",
                            action='store_true', default=False)
-    
-
     subparser.add_argument("--dependencies", help="Whether to copy the build's dependencies or not. Default: false.",
                            action='store_true', default=False)
     subparser.add_argument("--status", help="The new status of the build. Default: ''")
@@ -545,7 +542,7 @@ def build_info_promote(conan_api: ConanAPI, parser, subparser, *args):
         "dependencies": "true" if args.dependencies else "false",
         "status": args.status,
         "comment": args.comment,
-        "failFast": "false" if args.allow_partial else "true"
+        "failFast": "false" if args.continue_on_error else "true"
     }
 
     request_url = f"{url}/api/build/promote/{args.build_name}/{args.build_number}"
